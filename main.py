@@ -13,6 +13,7 @@ load_dotenv()
 PORT = int(os.getenv("PORT", "8080"))
 DOMAIN = os.getenv("NGROK_URL")
 WS_URL = f"wss://{DOMAIN}/ws"
+MODEL = "gpt-4o-mini" # You can change this to any OpenAI model you prefer
 WELCOME_GREETING = "Hi! I am a voice assistant powered by Twilio and Open A I . Ask me anything!"
 SYSTEM_PROMPT = "You are a helpful assistant. This conversation is being translated to voice, so answer carefully. When you respond, please spell out all numbers, for example twenty not 20. Do not include emojis in your responses. Do not include bullet points, asterisks, or special symbols."
 
@@ -28,7 +29,7 @@ app = FastAPI()
 async def ai_response(messages):
     """Get a response from OpenAI API"""
     completion = openai.chat.completions.create(
-        model="gpt-4o-mini",
+        model=MODEL,
         messages=messages
     )
     return completion.choices[0].message.content
@@ -39,7 +40,7 @@ async def twiml_endpoint():
     xml_response = f"""<?xml version="1.0" encoding="UTF-8"?>
     <Response>
       <Connect>
-        <ConversationRelay url="{WS_URL}" welcomeGreeting="{WELCOME_GREETING}" />
+        <ConversationRelay url="{WS_URL}" welcomeGreeting="{WELCOME_GREETING}" ttsProvider="ElevenLabs" voice="FGY2WhTYpPnrIDTdsKH5" />
       </Connect>
     </Response>"""
     
